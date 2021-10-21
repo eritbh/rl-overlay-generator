@@ -88,6 +88,16 @@
 				}
 			}
 
+			/** Takes a number of seconds and formats it into a nice string. */
+			function formatGameTime (seconds) {
+				let minutesText = Math.floor(seconds / 60);
+				let secondsText = `${seconds % 60}`;
+				if (secondsText.length < 2) {
+					secondsText = `0${secondsText}`;
+				}
+				return `${minutesText}:${secondsText}`;
+			}
+
 			// Connect to SOS plugin to receive game state updates
 			let sosConnection = new WebSocket(`ws://localhost:49122`);
 			sosConnection.addEventListener('close', event => {
@@ -105,7 +115,7 @@
 					console.log('received game state')
 					set('score0', data.game.teams[0].score);
 					set('score1', data.game.teams[1].score);
-					set('clock', data.game.time);
+					set('clock', formatGameTime(data.game.time_seconds));
 				}
 			});
 		</script>
