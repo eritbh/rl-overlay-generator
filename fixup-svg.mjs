@@ -39,4 +39,34 @@ for (let fontSource of fonts) {
 	overlaySVG = overlaySVG.replace(fontSource, `<style>${fontFaceCSS}</style>`);
 }
 
-console.log(overlaySVG);
+// Wrap the SVG in an HTML document
+
+let overlayHTML = `
+	<html class="debug">
+		<head>
+			<meta charset="utf-8">
+			<title>Overlay from ${process.argv[2].replace(/</g, '&lt;')}</title>
+			<style>
+				body {
+					margin: 0;
+				}
+				svg {
+					max-width: 100vw;
+					max-height: 100vh;
+					margin: auto;
+				}
+				.debug body {
+					background: red;
+				}
+				.debug svg {
+					background: white;
+				}
+			</style>
+		</head>
+		<body>
+			${overlaySVG}
+		</body>
+	</html>
+`;
+
+process.stdout.write(overlayHTML);
