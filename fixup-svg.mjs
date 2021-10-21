@@ -23,7 +23,7 @@ for (let fontSource of fonts) {
 	// Do some FontForge magic to convert the font from SVG to TTF
 	// this is incredibly unsafe lmao
 	// tried this at first with WOFF2 but ended up getting browser errors, TTF seems more stable
-	childProcess.execSync(`"C:\\Program Files (x86)\\FontForgeBuilds\\bin\\fontforge.exe" -c "open('out-${fontFamily}.svg').generate('out-${fontFamily}.ttf')"`);
+	childProcess.execSync(`"C:\\Program Files (x86)\\FontForgeBuilds\\bin\\fontforge.exe" -c "open('out-${fontFamily}.svg').generate('out-${fontFamily}.ttf')"`, {stdio: 'pipe'});
 
 	// Read the TTF file, shove it in a data: URI, wrap it in a @font-face
 	const woffSourceBuffer = fs.readFileSync(`out-${fontFamily}.ttf`);
