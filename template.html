@@ -1,7 +1,7 @@
-<html class="debug">
+<html>
 	<head>
 		<meta charset="utf-8">
-		<title>Overlay from ${process.argv[2].replace(/</g, '&lt;')}</title>
+		<title>Overlay</title>
 		<style>
 			body {
 				margin: 0;
@@ -10,21 +10,20 @@
 				max-width: 100vw;
 				max-height: 100vh;
 				margin: auto;
-			}
-			.debug body {
-				background: red;
-			}
-			.debug svg {
-				background: white;
+				box-shadow: 0 0 0 max(100vw, 100vh) red
 			}
 		</style>
 	</head>
 	<body>
 		OVERLAY_SVG_GOES_HERE
 		<script>
+			// Find all the placeholders on the page
 			let texts = document.querySelectorAll('text');
 
+			/** A list of <text> elements whose text can be modified. */
 			let placeholders = [];
+
+			/** A set storing text alignment options for each placeholder. */
 			let placeholderOptions = new Map();
 
 			for (const text of texts) {
@@ -36,8 +35,14 @@
 				placeholderOptions.set(text, {
 					horizontalAlign: 'center',
 				});
+
+				updateText(text, '');
 			}
 
+			/**
+			 * Updates the text of the given text element, respecting its
+			 * configured text alignment.
+			 */
 			function updateText(el, newText) {
 				if (!placeholderOptions.has(el)) {
 					throw new Error('element is not a placeholder');
@@ -65,20 +70,44 @@
 				el.setAttribute('transform', newTransform)
 			}
 
-			let strings = [
-				'Hello, world!',
-				'Hi',
-				'foo bar test this string is much longer than the other strings',
-				'Lorem ipsum',
-				'is this thing on?',
-				'&)(*@#^&%&*)(*$&#)(*^&)(#*@&$',
-				'would you look at that',
-			];
-			setInterval(() => {
-				for (const el of placeholders) {
-					updateText(el, strings[~~(Math.random() * strings.length)]);
+			/**
+			 * A map of state fields to placeholder <text> elements whose text
+			 * content should reflect the value of that field.
+			 */
+			// TODO: handle setting up this map via setup utility
+			const valuePlaceholderMap = {
+				score0: [placeholders[0]],
+				score1: [placeholders[1]],
+				clock: [placeholders[2]],
+			}
+
+			/** Updates the displayed value of a state field. */
+			function set(field, value) {
+				for (const el of valuePlaceholderMap[field]) {
+					updateText(el, value);
 				}
-			}, 1000);
+			}
+
+			// Connect to SOS plugin to receive game state updates
+			let sosConnection = new WebSocket(`ws://localhost:49122`);
+			sosConnection.addEventListener('close', event => {
+				console.error('SOS connection closed:', event.code);
+			});
+			sosConnection.addEventListener('message', e => {
+				const {event, data} = JSON.parse(e.data);
+				if (event === 'sos:version') {
+					console.log('SOS version:', data);
+					return;
+				}
+
+				// Listen for game state updates and display values
+				if (event === 'game:update_state') {
+					console.log('received game state')
+					set('score0', data.game.teams[0].score);
+					set('score1', data.game.teams[1].score);
+					set('clock', data.game.time);
+				}
+			});
 		</script>
 	</body>
 </html>
