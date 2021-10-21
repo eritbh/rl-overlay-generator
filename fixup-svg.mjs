@@ -40,33 +40,9 @@ for (let fontSource of fonts) {
 }
 
 // Wrap the SVG in an HTML document
+let overlayHTML = fs.readFileSync('template.html', 'utf-8')
+	.replace('OVERLAY_SVG_GOES_HERE', overlaySVG);
 
-let overlayHTML = `
-	<html class="debug">
-		<head>
-			<meta charset="utf-8">
-			<title>Overlay from ${process.argv[2].replace(/</g, '&lt;')}</title>
-			<style>
-				body {
-					margin: 0;
-				}
-				svg {
-					max-width: 100vw;
-					max-height: 100vh;
-					margin: auto;
-				}
-				.debug body {
-					background: red;
-				}
-				.debug svg {
-					background: white;
-				}
-			</style>
-		</head>
-		<body>
-			${overlaySVG}
-		</body>
-	</html>
-`;
+fs.writeFileSync(process.argv[3], overlayHTML, 'utf-8');
 
-process.stdout.write(overlayHTML);
+console.log(`Written HTML to ${process.argv[3]}`);
