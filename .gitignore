@@ -1,3 +1,6 @@
 out-*
 test*
 !demo/*
+
+dist
+node_modules
