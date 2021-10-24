@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/eritbh/rl-overlay-generator#readme",
   "scripts": {
-    "build": "tsc src/* --outDir dist",
+    "build": "tsc",
     "start": "electron dist/index.js"
   },
   "devDependencies": {
