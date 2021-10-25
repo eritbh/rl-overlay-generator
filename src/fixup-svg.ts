@@ -1,3 +1,5 @@
+// Utilities for SVG conversion
+
 import * as fs from 'fs';
 import * as childProcess from 'child_process';
 
