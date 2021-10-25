@@ -19,7 +19,7 @@ async function requestInput () {
 		console.error(response);
 	} else {
 		svg = response.svg;
-		console.log(svg);
+		document.getElementById('svg-preview')!.setAttribute('src', `data:image/svg+xml;base64,${btoa(svg)}`);
 	}
 }
 
