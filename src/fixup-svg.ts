@@ -5,14 +5,16 @@ import * as childProcess from 'child_process';
  * Given the contents of an SVG document, rewrites SVG <font> elements in the
  * document as CSS @font-face rules with embedded base64 font data.
  */
-function convertSVGFonts (svg) {
-	let preamble = svg.match(/^[\s\S]*?<svg[^>]*?>/)[0];
+function convertSVGFonts (svg: string) {
+	let preamble = svg.match(/^[\s\S]*?<svg[^>]*?>/)?.[0];
+	if (!preamble) throw new Error('malformed SVG');
 
 	// Separate out <font>s and process them individually
-	let fonts = svg.match(/<font[\s\S]*?<\/font>/g);
+	let fonts = svg.match(/<font[\s\S]*?<\/font>/g) ?? [];
 	for (let fontSource of fonts) {
 		// Get the name of the font family so we know what to call it
-		let fontFamily = fontSource.match(/font-family="([^"]*)"/)[1];
+		let fontFamily = fontSource.match(/font-family="([^"]*)"/)?.[1];
+		if (!fontFamily) throw new Error('<font> element with no family name');
 
 		// Add the parts of the glyph outlines that Illustrator didn't generate, and
 		// wrap the whole thing in <svg> so FontForge recognizes it
