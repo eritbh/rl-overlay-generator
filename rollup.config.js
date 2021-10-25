@@ -9,7 +9,7 @@ export default {
 	output: {
 		dir: 'dist',
 		format: 'cjs',
-		sourcemap: true,
+		sourcemap: 'inline',
 	},
 	external: [
 		'electron',
