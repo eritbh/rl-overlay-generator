@@ -5,12 +5,19 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Document</title>
+		<style>
+			#svg-preview {
+				background: magenta;
+			}
+		</style>
 	</head>
 	<body>
 		<main>
-			<button onclick="requestInput()">Open</button>
-			<button onclick="saveOutput()">Save</button>
-			<img id="svg-preview">
+			<p>
+				<button onclick="requestInput()">Open</button>
+				<button onclick="saveOutput()">Save</button>
+			</p>
+			<div id="svg-preview"></div>
 		</main>
 		<script src="dist/content.js"></script>
 	</body>
