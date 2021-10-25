@@ -10,7 +10,9 @@ declare global {
 	}
 }
 
-let svg = '';
+const domParser = new DOMParser();
+let xmlSerializer = new XMLSerializer();
+let svgDocument: XMLDocument | null = null;
 
 async function requestInput () {
 	let response = await window.messaging.requestSVGInput();
@@ -18,16 +20,18 @@ async function requestInput () {
 		alert(response.message);
 		console.error(response);
 	} else {
-		svg = response.svg;
-		document.getElementById('svg-preview')!.setAttribute('src', `data:image/svg+xml;base64,${btoa(svg)}`);
+		svgDocument = domParser.parseFromString(response.svg, 'image/svg+xml');
+		document.getElementById('svg-preview')!.setAttribute('src', `data:image/svg+xml;base64,${btoa(response.svg)}`);
 	}
 }
 
 async function saveOutput () {
-	if (!svg) {
+	if (!svgDocument) {
 		alert('No SVG file loaded!');
 		return;
 	}
+
+	let svg = xmlSerializer.serializeToString(svgDocument);
 
 	let response = await window.messaging.saveOverlay(svg);
 	if (response.error) {
