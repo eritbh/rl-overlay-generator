@@ -7,6 +7,9 @@ let messaging = {
 	requestSVGInput () {
 		return ipcRenderer.invoke('requestSVGInput');
 	},
+	saveOverlay (svg: string) {
+		return ipcRenderer.invoke('saveOverlay', svg);
+	}
 };
 
 export type Messaging = typeof messaging;

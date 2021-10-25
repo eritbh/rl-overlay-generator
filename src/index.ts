@@ -2,7 +2,8 @@
 
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
-import {promises as fs} from 'fs';
+import { promises as fs } from 'fs';
+import { convertSVGFonts, createHTMLOverlayFromSVG } from './fixup-svg';
 
 // #region Main window lifecycle
 
@@ -45,16 +46,50 @@ ipcMain.handle('requestSVGInput', async () => {
 		};
 	}
 
+	let contents;
 	try {
-		let contents = await fs.readFile(result.filePaths[0], 'utf-8');
-		return {
-			error: false,
-			svg: contents,
-		};
+		contents = await fs.readFile(result.filePaths[0], 'utf-8');
 	} catch (error) {
 		return {
 			error: true,
 			message: (error as Error).message,
+		};
+	}
+
+	let fixedContents = convertSVGFonts(contents);
+
+	return {
+		error: false,
+		svg: fixedContents,
+	};
+});
+
+ipcMain.handle('saveOverlay', async (event, svg) => {
+	const result = await dialog.showSaveDialog(mainWindow!, {
+		filters: [
+			{name: 'HTML Files', extensions: ['html']},
+			{name: 'All Files', extensions: ['*']},
+		],
+	});
+
+	if (result.canceled) {
+		return {
+			error: true,
+			message: 'User cancelled',
+		};
+	}
+
+	let html = createHTMLOverlayFromSVG(svg);
+	try {
+		await fs.writeFile(result.filePath!, html, 'utf-8');
+		return {
+			error: false,
+			path: result.filePath,
+		}
+	} catch (error) {
+		return {
+			error: true,
+			message: (error as Error).message
 		};
 	}
 });

@@ -7,7 +7,7 @@ import * as childProcess from 'child_process';
  * Given the contents of an SVG document, rewrites SVG <font> elements in the
  * document as CSS @font-face rules with embedded base64 font data.
  */
-function convertSVGFonts (svg: string) {
+export function convertSVGFonts (svg: string) {
 	let preamble = svg.match(/^[\s\S]*?<svg[^>]*?>/)?.[0];
 	if (!preamble) throw new Error('malformed SVG');
 
@@ -51,11 +51,8 @@ function convertSVGFonts (svg: string) {
 
 const outputHTMLTemplate = fs.readFileSync('template.html', 'utf-8');
 
-// Get input
-let overlaySVG = fs.readFileSync(process.argv[2], 'utf-8');
-// Convert fonts and insert HTML wrapper
-let overlayHTML = outputHTMLTemplate.replace('OVERLAY_SVG_GOES_HERE', convertSVGFonts(overlaySVG));
-// Write output
-fs.writeFileSync(process.argv[3], overlayHTML, 'utf-8');
-
-console.log(`Written HTML to ${process.argv[3]}`);
+/** Inserts the given SVG into the overlay template. */
+export function createHTMLOverlayFromSVG (svg: string) {
+	// literally just insert the SVG into the wrapper
+	return outputHTMLTemplate.replace('OVERLAY_SVG_GOES_HERE', svg);
+}

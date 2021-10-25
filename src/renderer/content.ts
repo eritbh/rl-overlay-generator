@@ -23,5 +23,20 @@ async function requestInput () {
 	}
 }
 
+async function saveOutput () {
+	if (!svg) {
+		alert('No SVG file loaded!');
+		return;
+	}
+
+	let response = await window.messaging.saveOverlay(svg);
+	if (response.error) {
+		alert(response.message);
+		console.error(response);
+	} else {
+		alert('Saved.');
+	}
+}
+
 // need this so rollup doesn't yeet it as an unused function
-console.log(requestInput);
+console.log(requestInput, saveOutput);
