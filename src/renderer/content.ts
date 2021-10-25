@@ -10,4 +10,18 @@ declare global {
 	}
 }
 
-window.messaging.logHello();
+let svg = '';
+
+async function requestInput () {
+	let response = await window.messaging.requestSVGInput();
+	if (response.error) {
+		alert(response.message);
+		console.error(response);
+	} else {
+		svg = response.svg;
+		console.log(svg);
+	}
+}
+
+// need this so rollup doesn't yeet it as an unused function
+console.log(requestInput);

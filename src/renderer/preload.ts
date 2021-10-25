@@ -4,8 +4,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 let messaging = {
-	logHello () {
-		ipcRenderer.invoke('logHello');
+	requestSVGInput () {
+		return ipcRenderer.invoke('requestSVGInput');
 	},
 };
 

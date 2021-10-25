@@ -1,7 +1,8 @@
 // The entry point for the main Electron process.
 
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
+import {promises as fs} from 'fs';
 
 // #region Main window lifecycle
 
@@ -27,8 +28,35 @@ app.on("window-all-closed", () => {
 
 // #region IPC stuff
 
-ipcMain.handle('logHello', () => {
-	console.log('Hello!');
+ipcMain.handle('requestSVGInput', async () => {
+	const result = await dialog.showOpenDialog(mainWindow!, {
+		buttonLabel: 'Load',
+		properties: ['openFile'],
+		filters: [
+			{name: 'SVG Files', extensions: ['svg']},
+			{name: 'All Files', extensions: ['*']},
+		],
+	});
+
+	if (result.canceled) {
+		return {
+			error: true,
+			message: 'User cancelled',
+		};
+	}
+
+	try {
+		let contents = await fs.readFile(result.filePaths[0], 'utf-8');
+		return {
+			error: false,
+			svg: contents,
+		};
+	} catch (error) {
+		return {
+			error: true,
+			message: (error as Error).message,
+		};
+	}
 });
 
 // #endregion
