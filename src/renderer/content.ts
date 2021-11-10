@@ -19,10 +19,12 @@ async function requestInput () {
 	if (response.error) {
 		alert(response.message);
 		console.error(response);
-	} else {
-		svgDocument = domParser.parseFromString(response.svg, 'image/svg+xml');
-		document.getElementById('svg-preview')!.setAttribute('src', `data:image/svg+xml;base64,${btoa(response.svg)}`);
+		return;
 	}
+
+	svgDocument = domParser.parseFromString(response.svg, 'image/svg+xml');
+
+	document.getElementById('svg-preview')!.setAttribute('src', `data:image/svg+xml;base64,${btoa(response.svg)}`);
 }
 
 async function saveOutput () {

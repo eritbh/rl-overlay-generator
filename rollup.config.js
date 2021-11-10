@@ -14,6 +14,8 @@ export default {
 	external: [
 		'electron',
 		'path',
+		'fs',
+		'child_process',
 	],
 	plugins: [
 		typescript(),
