@@ -5,6 +5,7 @@ export default {
 		'src/index.ts',
 		'src/renderer/preload.ts',
 		'src/renderer/content.ts',
+		'src/overlay/overlay-runtime.ts',
 	],
 	output: {
 		dir: 'dist',
