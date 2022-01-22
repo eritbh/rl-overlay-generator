@@ -16,7 +16,7 @@ let xmlSerializer = new XMLSerializer();
 let svgDocument: XMLDocument | null = null;
 let svgPreview = document.getElementById('svg-preview') as HTMLIFrameElement;
 
-const placeholderRegex = /
+const placeholderRegex = /^[#\s]+$/;
 
 async function requestInput () {
 	let response = await window.messaging.requestSVGInput();
@@ -45,7 +45,7 @@ async function requestInput () {
 	for (let i = 0; i < texts.length; i += 1) {
 		const text = texts[i];
 
-		if (!text.textContent?.match(/^[#\s]+$/)) {
+		if (!text.textContent?.match(placeholderRegex)) {
 			continue;
 		}
 
