@@ -1,12 +1,12 @@
 import typescript from '@rollup/plugin-typescript';
 
-export default {
-	input: [
-		'src/index.ts',
-		'src/renderer/preload.ts',
-		'src/renderer/content.ts',
-		'src/overlay/overlay-runtime.ts',
-	],
+export default [
+	'src/index.ts',
+	'src/renderer/preload.ts',
+	'src/renderer/content.ts',
+	'src/overlay/overlay-runtime.ts',
+].map(input => ({
+	input,
 	output: {
 		dir: 'dist',
 		format: 'cjs',
@@ -21,4 +21,4 @@ export default {
 	plugins: [
 		typescript(),
 	],
-};
+}));
