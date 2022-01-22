@@ -2,6 +2,7 @@
 
 console.log('Hello!');
 
+import { updateText } from '../util/frontend';
 // things exposed to the main world from preload script
 import { Messaging } from './preload';
 declare global {
@@ -13,6 +14,9 @@ declare global {
 const domParser = new DOMParser();
 let xmlSerializer = new XMLSerializer();
 let svgDocument: XMLDocument | null = null;
+let svgPreview = document.getElementById('svg-preview') as HTMLIFrameElement;
+
+const placeholderRegex = /
 
 async function requestInput () {
 	let response = await window.messaging.requestSVGInput();
@@ -24,7 +28,41 @@ async function requestInput () {
 
 	svgDocument = domParser.parseFromString(response.svg, 'image/svg+xml');
 
-	document.getElementById('svg-preview')!.setAttribute('src', `data:image/svg+xml;base64,${btoa(response.svg)}`);
+	function updatePreview () {
+		let svgContent = xmlSerializer.serializeToString(svgDocument!);
+		svgPreview.setAttribute('src', `data:image/svg+xml;utf-8,${encodeURIComponent(svgContent)}`);
+	}
+	updatePreview();
+
+	// get placeholders from SVG document
+	let texts = svgDocument.querySelectorAll('text');
+	let placeholders = [];
+
+	// Reset the placeholders div - we're about to rewrite it
+	let placeholdersDiv = document.getElementById('placeholders')!;
+	placeholdersDiv.innerHTML = '';
+
+	for (let i = 0; i < texts.length; i += 1) {
+		const text = texts[i];
+
+		if (!text.textContent?.match(/^[#\s]+$/)) {
+			continue;
+		}
+
+		placeholders.push(text);
+		text.classList.add('overlay-placeholder', `overlay-placeholder-${i}`);
+
+		let input = document.createElement('input');
+		input.type = "text";
+		input.addEventListener('input', () => {
+			updateText(text, input.value, {
+				horizontalAlign: 'center',
+				verticalAlign: 'center',
+			});
+			updatePreview();
+		});
+		placeholdersDiv.appendChild(input);
+	}
 }
 
 async function saveOutput () {
