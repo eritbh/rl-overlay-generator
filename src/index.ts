@@ -3,7 +3,7 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { convertSVGFonts, createHTMLOverlayFromSVG } from './fixup-svg';
+import { convertSVGFonts, createHTMLOverlayFromSVG } from './util/fixup-svg';
 
 // #region Main window lifecycle
 
