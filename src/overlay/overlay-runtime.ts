@@ -75,10 +75,17 @@ document.addEventListener('readystatechange', () => {
 			set('time', formatGameTime(data.game.time_seconds, data.game.isOT));
 
 			const currentPlayer = data.players[data.game.target];
+			// TODO:  Show/hide player info layer is hardcoded
 			if (currentPlayer) {
+				for (const playerOnlyLayer of document.querySelectorAll('g[id*="player_info" i]')) {
+					playerOnlyLayer.setAttribute('style', 'visibility: visible');
+				}
 				set('player', currentPlayer.name);
 				set('boost', currentPlayer.boost);
 			} else {
+				for (const playerOnlyLayer of document.querySelectorAll('g[id*="player_info" i]')) {
+					playerOnlyLayer.setAttribute('style', 'visibility: hidden');
+				}
 				set('player', '');
 				set('boost', '');
 			}
