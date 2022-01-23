@@ -11,17 +11,12 @@ let placeholders: SVGTextElement[] = [];
 /** A set storing text alignment options for each placeholder. */
 let placeholderOptions = new Map<SVGTextElement, PlaceholderOptions>();
 
-
-/**
- * A map of state fields to placeholder <text> elements whose text
- * content should reflect the value of that field.
- */
-const valuePlaceholderMap: Record<string, SVGTextElement[]> = {};
-
 /** Updates the displayed value of a state field. */
 function set(field: string, value: string) {
-	for (const el of valuePlaceholderMap[field]) {
-		updateText(el, value, placeholderOptions.get(el)!);
+	for (const el of placeholders) {
+		if (el.classList.contains(`overlay-value-${field}`)) {
+			updateText(el, value, placeholderOptions.get(el)!);
+		}
 	}
 }
 
@@ -58,11 +53,6 @@ document.addEventListener('readystatechange', () => {
 		updateText(text, '', options);
 	}
 
-	// Set up connections between game state and placeholders
-	valuePlaceholderMap.score0 = placeholders.filter(placeholder => placeholder.classList.contains('overlay-value-a'));
-	valuePlaceholderMap.score1 = placeholders.filter(placeholder => placeholder.classList.contains('overlay-value-b'));
-	valuePlaceholderMap.clock = placeholders.filter(placeholder => placeholder.classList.contains('overlay-value-time'));
-
 	// Connect to SOS plugin to receive game state updates
 	let sosConnection = new WebSocket(`ws://localhost:49122`);
 	sosConnection.addEventListener('close', event => {
@@ -78,9 +68,9 @@ document.addEventListener('readystatechange', () => {
 		// Listen for game state updates and display values
 		if (event === 'game:update_state') {
 			console.log('received game state')
-			set('score0', data.game.teams[0].score);
-			set('score1', data.game.teams[1].score);
-			set('clock', formatGameTime(data.game.time_seconds, data.game.isOT));
+			set('a', data.game.teams[0].score);
+			set('b', data.game.teams[1].score);
+			set('time', formatGameTime(data.game.time_seconds, data.game.isOT));
 		}
 	});
 });
