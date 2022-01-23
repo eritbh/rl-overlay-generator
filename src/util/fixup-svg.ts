@@ -50,9 +50,17 @@ export function convertSVGFonts (svg: string) {
 }
 
 const outputHTMLTemplate = fs.readFileSync('template.html', 'utf-8');
+const outputRuntimeScript = fs.readFileSync('dist/overlay-runtime.js', 'utf-8');
 
 /** Inserts the given SVG into the overlay template. */
 export function createHTMLOverlayFromSVG (svg: string) {
-	// literally just insert the SVG into the wrapper
-	return outputHTMLTemplate.replace('OVERLAY_SVG_GOES_HERE', svg);
+	return outputHTMLTemplate
+		// insert the runtime JS into the wrapper
+		// TODO: we need a much better way to inject this source
+		.replace(
+			'OVERLAY_RUNTIME_JS_GOES_HERE',
+			`<script>${outputRuntimeScript}</script>`
+		)
+		// insert the SVG into the wrapper
+		.replace('OVERLAY_SVG_GOES_HERE', svg);
 }

@@ -45,22 +45,33 @@ async function requestInput () {
 	for (let i = 0; i < texts.length; i += 1) {
 		const text = texts[i];
 
-		if (!text.textContent?.match(placeholderRegex)) {
+		let match = text.textContent?.match(placeholderRegex);
+		if (!match) {
 			continue;
 		}
 
 		placeholders.push(text);
-		text.classList.add('overlay-placeholder', `overlay-placeholder-${i}`);
+		text.classList.add('overlay-placeholder');
+		if (match[2]) {
+			text.classList.add(`overlay-value-${match[2]}`);
+		} else {
+			text.classList.add(`overlay-value-unknown`);
+		}
 
 		let input = document.createElement('input');
 		input.type = "text";
-		input.addEventListener('input', () => {
+		input.value = match[0];
+
+		const inputOnUpdate = () => {
 			updateText(text, input.value, {
 				horizontalAlign: 'center',
 				verticalAlign: 'center',
 			});
 			updatePreview();
-		});
+		}
+		input.addEventListener('input', inputOnUpdate);
+		inputOnUpdate();
+
 		placeholdersDiv.appendChild(input);
 	}
 }

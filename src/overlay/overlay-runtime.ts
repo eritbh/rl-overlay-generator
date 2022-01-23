@@ -16,7 +16,7 @@ let placeholderOptions = new Map<SVGTextElement, PlaceholderOptions>();
  * A map of state fields to placeholder <text> elements whose text
  * content should reflect the value of that field.
  */
-const valuePlaceholderMap: Record<string, SVGTextElement[]> = {}
+const valuePlaceholderMap: Record<string, SVGTextElement[]> = {};
 
 /** Updates the displayed value of a state field. */
 function set(field: string, value: string) {
@@ -44,7 +44,7 @@ document.addEventListener('readystatechange', () => {
 
 	// Set up all the text placeholders
 	for (const text of texts) {
-		if (!text.textContent?.match(/^[#\s]+$/)) {
+		if (!text.classList.contains('overlay-placeholder')) {
 			continue;
 		}
 
@@ -59,9 +59,9 @@ document.addEventListener('readystatechange', () => {
 	}
 
 	// Set up connections between game state and placeholders
-	valuePlaceholderMap.score0 = [placeholders[2]];
-	valuePlaceholderMap.score1 = [placeholders[1]];
-	valuePlaceholderMap.clock = [placeholders[0]];
+	valuePlaceholderMap.score0 = placeholders.filter(placeholder => placeholder.classList.contains('overlay-value-a'));
+	valuePlaceholderMap.score1 = placeholders.filter(placeholder => placeholder.classList.contains('overlay-value-b'));
+	valuePlaceholderMap.clock = placeholders.filter(placeholder => placeholder.classList.contains('overlay-value-time'));
 
 	// Connect to SOS plugin to receive game state updates
 	let sosConnection = new WebSocket(`ws://localhost:49122`);
