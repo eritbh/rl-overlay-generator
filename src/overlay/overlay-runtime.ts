@@ -70,6 +70,8 @@ document.addEventListener('readystatechange', () => {
 			console.log('received game state')
 			set('a', data.game.teams[0].score);
 			set('b', data.game.teams[1].score);
+			set('team_a', data.game.teams[0].name);
+			set('team_b', data.game.teams[1].name);
 			set('time', formatGameTime(data.game.time_seconds, data.game.isOT));
 		}
 	});
