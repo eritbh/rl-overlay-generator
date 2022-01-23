@@ -34,6 +34,23 @@ async function requestInput () {
 	}
 	updatePreview();
 
+	// parse style tag for predefined colors
+	// TODO: proof of concept only, flesh this out more
+	for (const style of svgDocument.querySelectorAll('style')) {
+		style.textContent = (style.textContent ?? '')
+			.replace(/#FF0000/gi, 'var(--teamcolor0primary)')
+			.replace(/#00FF00/gi, 'var(--teamcolor1primary)');
+	}
+	let teamColorStyle = svgDocument.createElement('style');
+	teamColorStyle.id = 'teamcolorstyle';
+	teamColorStyle.textContent = `
+		:root {
+			--teamcolor0primary: #1873FF;
+			--teamcolor1primary: #C26418;
+		}
+	`;
+	svgDocument.documentElement.append(teamColorStyle);
+
 	// get placeholders from SVG document
 	let texts = svgDocument.querySelectorAll('text');
 	let placeholders = [];

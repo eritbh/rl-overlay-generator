@@ -82,6 +82,20 @@ document.addEventListener('readystatechange', () => {
 				set('player', '');
 				set('boost', '');
 			}
+
+			// manually setting colors for now
+			let style = document.getElementById('teamcolorstyle');
+			if (!style) {
+				style = document.createElement('style');
+				style.id = 'teamcolorstyle';
+				document.append(style);
+			}
+			style.textContent = `
+				:root {
+					--teamcolor0primary: #${data.game.teams[0].color_primary};
+					--teamcolor1primary: #${data.game.teams[1].color_primary};
+				}
+			`;
 		}
 	});
 });
