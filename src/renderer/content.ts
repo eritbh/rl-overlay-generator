@@ -16,7 +16,7 @@ let xmlSerializer = new XMLSerializer();
 let svgDocument: XMLDocument | null = null;
 let svgPreview = document.getElementById('svg-preview') as HTMLIFrameElement;
 
-const placeholderRegex = /^[#\s]+$/;
+const placeholderRegex = /^#+(\s*(a|b|time|team_a|team_b|player|boost)\s*#+)?$/;
 
 async function requestInput () {
 	let response = await window.messaging.requestSVGInput();
