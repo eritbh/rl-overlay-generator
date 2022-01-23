@@ -73,6 +73,10 @@ document.addEventListener('readystatechange', () => {
 			set('team_a', data.game.teams[0].name);
 			set('team_b', data.game.teams[1].name);
 			set('time', formatGameTime(data.game.time_seconds, data.game.isOT));
+
+			const currentPlayer = data.players[data.game.target];
+			set('player', currentPlayer.name);
+			set('boost', currentPlayer.boost);
 		}
 	});
 });
