@@ -45,7 +45,7 @@ document.addEventListener('readystatechange', () => {
 
 		placeholders.push(text);
 		let options: PlaceholderOptions = {
-			horizontalAlign: 'center',
+			horizontalAlign: text.classList.contains('overlay-align-left') ? 'left' : text.classList.contains('overlay-align-center') ? 'center' : 'right',
 			verticalAlign: 'top',
 		};
 		placeholderOptions.set(text, options);

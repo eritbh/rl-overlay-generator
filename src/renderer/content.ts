@@ -2,7 +2,7 @@
 
 console.log('Hello!');
 
-import { updateText } from '../util/frontend';
+import { PlaceholderOptions, updateText } from '../util/frontend';
 // things exposed to the main world from preload script
 import { Messaging } from './preload';
 declare global {
@@ -57,14 +57,25 @@ async function requestInput () {
 		} else {
 			text.classList.add(`overlay-value-unknown`);
 		}
+		text.classList.add('overlay-align-left'); // default
 
 		let input = document.createElement('input');
 		input.type = "text";
 		input.value = match[0];
 
+		function getHorizontalAlign (): PlaceholderOptions['horizontalAlign'] {
+			if (text.classList.contains('overlay-align-left')) {
+				return 'left';
+			} else if (text.classList.contains('overlay-align-center')) {
+				return 'center';
+			} else {
+				return 'right';
+			}
+		}
+
 		const inputOnUpdate = () => {
 			updateText(text, input.value, {
-				horizontalAlign: 'center',
+				horizontalAlign: getHorizontalAlign(),
 				verticalAlign: 'center',
 			});
 			updatePreview();
@@ -73,6 +84,34 @@ async function requestInput () {
 		inputOnUpdate();
 
 		placeholdersDiv.appendChild(input);
+
+		let alignSelect = document.createElement('select');
+		let optionLeft = document.createElement('option');
+		optionLeft.textContent = 'Left';
+		optionLeft.value = 'left';
+		alignSelect.append(optionLeft);
+		let optionCenter = document.createElement('option');
+		optionCenter.textContent = 'Center';
+		optionCenter.value = 'center';
+		alignSelect.append(optionCenter);
+		let optionRight = document.createElement('option');
+		optionRight.textContent = 'Right';
+		optionRight.value = 'right';
+		alignSelect.append(optionRight);
+
+		alignSelect.value = 'center';
+
+		const alignSelectOnUpdate = () => {
+			text.classList.remove('overlay-align-left');
+			text.classList.remove('overlay-align-center');
+			text.classList.remove('overlay-align-right');
+			text.classList.add(`overlay-align-${alignSelect.value}`);
+		}
+		alignSelect.addEventListener('input', alignSelectOnUpdate);
+		alignSelectOnUpdate();
+
+		placeholdersDiv.append(alignSelect);
+		placeholdersDiv.append(document.createElement('br'));
 	}
 }
 
