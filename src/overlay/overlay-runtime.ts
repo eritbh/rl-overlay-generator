@@ -75,8 +75,13 @@ document.addEventListener('readystatechange', () => {
 			set('time', formatGameTime(data.game.time_seconds, data.game.isOT));
 
 			const currentPlayer = data.players[data.game.target];
-			set('player', currentPlayer.name);
-			set('boost', currentPlayer.boost);
+			if (currentPlayer) {
+				set('player', currentPlayer.name);
+				set('boost', currentPlayer.boost);
+			} else {
+				set('player', '');
+				set('boost', '');
+			}
 		}
 	});
 });
